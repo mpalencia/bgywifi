@@ -1,0 +1,5 @@
+suites:
+    main:
+        namespace: BrngyWiFi
+        psr4_prefix: BrngyWiFi
+        src_path: app
