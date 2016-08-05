@@ -111,9 +111,9 @@ class EventGuestListController extends Controller
         if ($this->eventGuestList->updateEventGuestList($request->getContent())) {
             $response = $curl->call(json_encode($fields));
 
-            if (array_key_exists('errors', json_decode($response, true))) {
-                return $this->response->make(['result' => 'error']);
-            }
+            /*if (array_key_exists('errors', json_decode($response, true))) {
+            return $this->response->make(['result' => 'error']);
+            }*/
 
             return $this->response->make(['result' => 'success']);
         }

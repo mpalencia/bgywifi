@@ -18,6 +18,7 @@ class UserTableSeeder extends DatabaseSeeder
             'pin_code' => null,
             'contact_no' => '639266840144',
             'remember_token' => str_random(10),
+            'main_account_id' => 1,
         ], [
             'first_name' => 'Kevin',
             'last_name' => 'Villanueva',
@@ -27,6 +28,7 @@ class UserTableSeeder extends DatabaseSeeder
             'pin_code' => null,
             'contact_no' => null,
             'remember_token' => str_random(10),
+            'main_account_id' => 2,
         ], /*[
         'first_name' => 'Ichigo',
         'last_name' => 'Kurosaki',
@@ -63,6 +65,7 @@ class UserTableSeeder extends DatabaseSeeder
             'pin_code' => null,
             'contact_no' => null,
             'remember_token' => str_random(10),
+            'main_account_id' => 3,
         ]]);
         //factory(User::class, 10)->create();
     }

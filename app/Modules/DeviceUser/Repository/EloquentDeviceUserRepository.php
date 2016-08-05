@@ -48,7 +48,11 @@ class EloquentDeviceUserRepository implements DeviceUserRepositoryInterface
      */
     public function getAllDeviceUserByHomeowner($home_owner_id)
     {
-        return $this->deviceUser->where('home_owner_id', $home_owner_id)->get()->toArray();
+        return $this->deviceUser
+            ->select('device_user.id', 'device_user.home_owner_id', 'device_user.email', 'device_user.mobile_no', 'users.id as user_id', 'users.first_name', 'users.last_name')->where('home_owner_id', $home_owner_id)
+            ->leftJoin('users', 'device_user.email', '=', 'users.email')
+            ->get()
+            ->toArray();
     }
 
     /**

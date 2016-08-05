@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->string('pin_code', 60)->nullable();
             $table->integer('notification')->default(1);
             $table->integer('alert')->default(1);
+            $table->integer('main_account_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

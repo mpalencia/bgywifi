@@ -1,4 +1,4 @@
-
+/*
 var map;
 $(document).ready(function(){
   var map = new GMaps({
@@ -36,48 +36,8 @@ $(document).ready(function(){
 
 
 
-	$.get('getEventsLongLat', function(data){
-		jQuery.each(data, function(index, item) {
-
-			var pinColor = '';
-			switch (item.category) {
-		        case 2:
-		            pinColor = "/assets/images/m2.png";
-		            break;
-		        case 3:
-		            pinColor = "/assets/images/m3.png";
-		            break;
-		        case 4:
-		            pinColor = "/assets/images/m4.png";
-		            break;
-		        case 5:
-		            pinColor = "/assets/images/m5.png";
-		            break;
-		        case 6:
-		            pinColor = "/assets/images/m7.png";
-		            break;
-		        default:
-		            pinColor = "/assets/images/m1.png";
-		            break;
-		    }
-		  var markers = [];
-		  var marker = map.addMarker({
-			lat: item.latitude,
-			lng: item.longitude,
-		    title: 'Home Owner Information',
-		    icon: pinColor,
-		    infoWindow: {
-		      content: '<p><strong>'+item.homeowner_name+'</strong><br>'+item.homeowner_address+'</p>'
-		    },
-			mouseover: function(){
-		        (this.infoWindow).open(this.map, this);
-		    }
-
-		  });
-		  markers.push(marker);
-		});
-	});
-});
+	
+});*/
 
 var mapAlerts;
 
@@ -95,7 +55,7 @@ $(document).ready(function(){
           gridSize: 40,
           styles: [{
         	  height: 53,
-        	  url: "{{asset('assets/images')}}/m6.png",
+        	  url: "{{asset('assets/images')}}/m10.png",
         	  width: 53
   	  	  }]
         }
@@ -119,6 +79,48 @@ $(document).ready(function(){
 
   	setInterval(function(){ 
 
+  		$.get('getEventsLongLat', function(data){
+		jQuery.each(data, function(index, item) {
+
+			var pinColor = '';
+			switch (item.category) {
+		        case 2:
+		            pinColor = "/assets/images/m3.png";
+		            break;
+		        case 3:
+		            pinColor = "/assets/images/m4.png";
+		            break;
+		        case 4:
+		            pinColor = "/assets/images/m5.png";
+		            break;
+		        case 5:
+		            pinColor = "/assets/images/m1.png";
+		            break;
+		        case 6:
+		            pinColor = "/assets/images/m7.png";
+		            break;
+		        default:
+		            pinColor = "/assets/images/m2.png";
+		            break;
+		    }
+		  var markers = [];
+		  var marker = map.addMarker({
+			lat: item.latitude,
+			lng: item.longitude,
+		    title: 'Home Owner Information',
+		    icon: pinColor,
+		    infoWindow: {
+		      content: '<p><strong>'+item.homeowner_name+'</strong><br>'+item.homeowner_address+'</p>'
+		    },
+			mouseover: function(){
+		        (this.infoWindow).open(this.map, this);
+		    }
+
+		  });
+		  markers.push(marker);
+		});
+	});
+
 		$.get('getEmergency', function(data){
 			jQuery.each(data, function(index, item) {
 
@@ -127,7 +129,7 @@ $(document).ready(function(){
 					lat: item.latitude,
 					lng: item.longitude,
 				    title: 'Home Owner Information',
-				    icon: "/assets/images/m6.png",
+				    icon: "/assets/images/m1.png",
 				    infoWindow: {
 				      content: '<p><strong>'+item.homeowner_name+'</strong><br>'+item.homeowner_address+'</p>'
 				    },
@@ -177,7 +179,7 @@ $(document).ready(function(){
 					lat: item.latitude,
 					lng: item.longitude,
 				    title: 'Home Owner Information',
-				    icon: "/assets/images/m1.png",
+				    icon: "/assets/images/11.png",
 				    infoWindow: {
 				      content: '<p><strong>'+item.homeowner_name+'</strong><br>'+item.homeowner_address+'</p>'
 				    },

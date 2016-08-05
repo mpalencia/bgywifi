@@ -20,7 +20,7 @@ function showBlockUI(msg){
 
 showBlockUI('Loading map, please wait...');
 $(document).ready(function(){
-	var map = new GMaps({
+	/*var map = new GMaps({
 	    div: '#map',
 	    lat: 14.2366558,
 	    lng: 121.0400705,
@@ -50,7 +50,7 @@ $(document).ready(function(){
     name: "OpenStreetMap",
   	maxZoom: 20
   });
-  map.setMapTypeId("osm");
+  map.setMapTypeId("osm");*/
 
   var mapAlerts = new GMaps({
     div: '#mapAlerts',
@@ -66,7 +66,7 @@ $(document).ready(function(){
           gridSize: 40,
           styles: [{
         	  height: 53,
-        	  url: "{{asset('assets/images')}}/m6.png",
+        	  url: "{{asset('assets/images')}}/m5.png",
         	  width: 53
   	  	  }]
         }
@@ -90,7 +90,7 @@ $(document).ready(function(){
   	var issuePastCount = 0;
   	var unidentifiedPastCount = 0;
 
-
+/*
   	$('#eventsRd').click(function(){
 		$('.mapEvents').removeClass('hidden');
 		$('.mapAlerts').addClass('hidden');
@@ -100,141 +100,41 @@ $(document).ready(function(){
 		$('.mapAlerts').removeClass('hidden');
 		$('.mapEvents').addClass('hidden');
   	});
-
+*/
   	setInterval(function(){
 
-		/*$.get('getEmergency', function(data){
-			jQuery.each(data, function(index, item) {
 
-			  	var markers = [];
-		  		var markerOptions = {
-					lat: item.latitude,
-					lng: item.longitude,
-				    title: 'Home Owner Information',
-				    icon: "{{asset('assets/images')}}/m6.png",
-				    infoWindow: {
-				      content: '<p><strong>'+item.homeowner_name+'</strong><br>'+item.homeowner_address+'</p>'
-				    },
-					mouseover: function(){
-				        (this.infoWindow).open(this.mapAlerts, this);
-				    }
-			  	};
-
-			  	if(emergencyPastCount != data.length) {
-				  	mapAlerts.addMarker(markerOptions);
-				  	emergencyPastCount++;
-			  	}
-			});
-		});
-
-		$.get('getCaution', function(data){
-			jQuery.each(data, function(index, item) {
-
-			  	var markers = [];
-			  	var markerOptions = {
-					lat: item.latitude,
-					lng: item.longitude,
-				    title: 'Home Owner Information',
-				    icon: "{{asset('assets/images')}}/m2.png",
-				    infoWindow: {
-				      content: '<p><strong>'+item.homeowner_name+'</strong><br>'+item.homeowner_address+'</p>'
-				    },
-					mouseover: function(){
-				        (this.infoWindow).open(this.mapAlerts, this);
-				    }
-			   	};
-
-			    if(cautionPastCount != data.length) {
-				  	mapAlerts.addMarker(markerOptions);
-				  	cautionPastCount++;
-			  	}
-			});
-		});
-
-
-		$.get('getIssues', function(data){
-			jQuery.each(data, function(index, item) {
-
-			  	var markers = [];
-
-				var markerOptions = {
-					lat: item.latitude,
-					lng: item.longitude,
-				    title: 'Home Owner Information',
-				    icon: "{{asset('assets/images')}}/m1.png",
-				    infoWindow: {
-				      content: '<p><strong>'+item.homeowner_name+'</strong><br>'+item.homeowner_address+'</p>'
-				    },
-					mouseover: function(){
-				        (this.infoWindow).open(this.mapAlerts, this);
-				    }
-			  	};
-
-			  	if(issuePastCount != data.length) {
-				  	mapAlerts.addMarker(markerOptions);
-				  	issuePastCount++;
-			  	}
-
-
-			});
-		});
-
-		$.get('getUnidentifiedAlerts', function(data){
-			jQuery.each(data, function(index, item) {
-
-			  	var markers = [];
-
-				var markerOptions = {
-					lat: item.latitude,
-					lng: item.longitude,
-				    title: 'Home Owner Information',
-				    icon: "{{asset('assets/images')}}/m7.png",
-				    infoWindow: {
-				      content: '<p><strong>'+item.homeowner_name+'</strong><br>'+item.homeowner_address+'</p>'
-				    },
-					mouseover: function(){
-				        (this.infoWindow).open(this.mapAlerts, this);
-				    }
-			  	};
-
-			  	if(unidentifiedPastCount != data.length) {
-				  	mapAlerts.addMarker(markerOptions);
-				  	unidentifiedPastCount++;
-			  	}
-
-
-			});
-		});*/
 		$.get('getEventsLongLat', function(data){
 			jQuery.each(data, function(index, item) {
-
-				var pinColor = '';
-				switch (item.category) {
+				/*mapAlerts.refresh();
+				mapAlerts.removeMarkers();*/
+				var pinColor = "/assets/images/m4.png";
+				/*switch (item.category) {
 			        case 2:
-			            pinColor = "{{asset('assets/images')}}/m2.png";
+			            pinColor = "/assets/images/m3.png";
 			            break;
 			        case 3:
-			            pinColor = "{{asset('assets/images')}}/m3.png";
+			            pinColor = "/assets/images/m4.png";
 			            break;
 			        case 4:
-			            pinColor = "{{asset('assets/images')}}/m4.png";
+			            pinColor = "/assets/images/m5.png";
 			            break;
 			        case 5:
-			            pinColor = "{{asset('assets/images')}}/m5.png";
+			            pinColor = "/assets/images/m6.png";
 			            break;
 			        case 6:
-			            pinColor = "{{asset('assets/images')}}/m7.png";
+			            pinColor = "/assets/images/m7.png";
 			            break;
 			        default:
-			            pinColor = "{{asset('assets/images')}}/m1.png";
+			            pinColor = "/assets/images/m2.png";
 			            break;
-			    }
+			    }*/
 			  var markers = [];
 			  var markerOptions = {
 				lat: item.latitude,
 				lng: item.longitude,
 			    title: 'Home Owner Information',
-			    icon: pinColor,
+			   icon: "{{asset('assets/images')}}/m4.png",
 			    infoWindow: {
 			      content: '<p><strong>'+item.homeowner_name+'</strong><br>'+item.homeowner_address+'</p>'
 			    },
@@ -242,21 +142,20 @@ $(document).ready(function(){
 			  };
 
 			  if(eventsPastCount != data.length) {
-				  map.addMarker(markerOptions);
+				  mapAlerts.addMarker(markerOptions);
 				  eventsPastCount++;
 				}
 			});
 		});
 		$.get('getAllAlertCount', function(data){
-			mapAlerts.refresh();
-			mapAlerts.removeMarkers();
+
 			jQuery.each(data.emergency, function(index, item) {
 				var markers = [];
 				var markerOptions = {
 					lat: item.latitude,
 					lng: item.longitude,
 				    title: 'Home Owner Information',
-				    icon: "{{asset('assets/images')}}/m6.png",
+				    icon: "{{asset('assets/images')}}/m1.png",
 				    infoWindow: {
 				      content: '<p><h4>'+item.emergency_type+'</h4><strong>'+item.homeowner_name+'</strong><br>'+item.homeowner_address+'</p>'
 				    },
@@ -265,10 +164,10 @@ $(document).ready(function(){
 				    }
 			  	};
 
-			  	//if(emergencyPastCount != data.emergency.length) {console.log('test');
+			  	if(emergencyPastCount != data.emergency.length) {
 				  	mapAlerts.addMarker(markerOptions);
-				  	//emergencyPastCount++;
-			  	//}
+				  	emergencyPastCount++;
+			  	}
 			});
 
 			jQuery.each(data.caution, function(index, item) {
@@ -286,10 +185,10 @@ $(document).ready(function(){
 				    }
 			  	};
 
-			  	//if(cautionPastCount != data.caution.length) {
+			  	if(cautionPastCount != data.caution.length) {
 				  	mapAlerts.addMarker(markerOptions);
-				  	//cautionPastCount++;
-			  	//}
+				  	cautionPastCount++;
+			  	}
 			});
 
 			jQuery.each(data.issues, function(index, item) {
@@ -298,7 +197,7 @@ $(document).ready(function(){
 					lat: item.latitude,
 					lng: item.longitude,
 				    title: 'Home Owner Information',
-				    icon: "{{asset('assets/images')}}/m1.png",
+				    icon: "{{asset('assets/images')}}/m11.png",
 				    infoWindow: {
 				      content: '<p><h4>'+item.issue_type+'</h4><strong>'+item.homeowner_name+'</strong><br>'+item.homeowner_address+'</p>'
 				    },
@@ -307,10 +206,10 @@ $(document).ready(function(){
 				    }
 			  	};
 
-			  	//if(issuePastCount != data.issues.length) {
+			  	if(issuePastCount != data.issues.length) {
 				  	mapAlerts.addMarker(markerOptions);
-				  	//issuePastCount++;
-			  	//}
+				  	issuePastCount++;
+			  	}
 			});
 
 			jQuery.each(data.unidentified, function(index, item) {
@@ -319,7 +218,7 @@ $(document).ready(function(){
 					lat: item.latitude,
 					lng: item.longitude,
 				    title: 'Home Owner Information',
-				    icon: "{{asset('assets/images')}}/m7.png",
+				    icon: "{{asset('assets/images')}}/m9.png",
 				    infoWindow: {
 				      content: '<p><strong>'+item.homeowner_name+'</strong><br>'+item.homeowner_address+'</p>'
 				    },
@@ -328,10 +227,10 @@ $(document).ready(function(){
 				    }
 			  	};
 
-			  	//if(unidentifiedPastCount != data.unidentified.length) {
+			  	if(unidentifiedPastCount != data.unidentified.length) {
 				  	mapAlerts.addMarker(markerOptions);
-				  	//unidentifiedPastCount++;
-			  	//}
+				  	unidentifiedPastCount++;
+			  	}
 			});
 		});
 
@@ -352,7 +251,7 @@ $(document).ready(function(){
 			});
 		});
 
-		$.get('getEventCount', function(data){
+		/*$.get('getEventCount', function(data){
 			var ctr = 1;
 			var testingkolang = '';
 			jQuery.each(data, function(index, item) {
@@ -363,6 +262,14 @@ $(document).ready(function(){
 			});
 
 			$('#eventList').html(testingkolang);
+		});*/
+		$.get('getEventCount', function(data){
+			var totalEventCount = 0;
+			jQuery.each(data, function(index, item) {
+				totalEventCount = totalEventCount + item.count;
+			});;
+
+			$('#eventCount').html(totalEventCount);
 		});
 
 	}, 20000);
@@ -380,6 +287,6 @@ $(document).ready(function(){
 
 $(window).load(function(){
 $.unblockUI();
-$('.mapEvents').addClass('hidden');
+//$('.mapEvents').addClass('hidden');
 })
 </script>

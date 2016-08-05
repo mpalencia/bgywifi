@@ -159,12 +159,13 @@ class EmergencyController extends Controller
 
         //if (strtolower($request->input('message_type')) == 'incoming' || strtolower($request->input('message_type')) == 'send') {
         $r = json_decode($request->message, true);
+        $texter = User::where('contact_no', $request->mobile_number)->first();
 
         if (is_null($r)) {
 
-            $message = explode(" ", $request->message);
+            $message = $request->message;
 
-            switch (strtolower($message[0])) {
+            switch (strtolower($message)) {
                 case 'yes':
                     $decision = 'Accepted';
                     $homeownerResponse = 1;
@@ -176,12 +177,13 @@ class EmergencyController extends Controller
                     break;
 
                 default:
-                    $chikkaReply->call($request, false, 'Invalid input. Please reply YES/NO <SPACE> <GUEST ID>');
+                    $chikkaReply->call($request, false, 'Invalid input. Please reply YES/NO');
                     return ['result' => 'error', 'message' => 'Invalid input.'];
                     break;
             }
 
-            $notif = $this->notifications->getByChikkaCode($message[1]);
+            //$notif = $this->notifications->getByChikkaCode($message);
+            $notif = $this->notifications->getFirstVisitor($texter->id);
 
             if (!$notif) {
                 $chikkaReply->call($request, false, 'Invalid code or visitor is already accepted/denied.');

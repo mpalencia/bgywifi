@@ -84,13 +84,14 @@ class DeviceUserController extends Controller
         if ($this->deviceUserRepositoryInterface->createDeviceUser($this->request->getContent())) {
             $newHomeowner = User::create(
                 array(
-                    'first_name' => $mainHomeowner[0]['first_name'],
-                    'last_name' => $mainHomeowner[0]['last_name'],
+                    'first_name' => $request['first_name'], //$mainHomeowner[0]['first_name'],
+                    'last_name' => $request['last_name'], //$mainHomeowner[0]['last_name'],
                     'email' => $request['email'],
                     'username' => $request['email'],
                     'password' => bcrypt($request['mobile_no']),
                     'contact_no' => $request['mobile_no'],
                     'remember_token' => str_random(10),
+                    'main_account_id' => $request['home_owner_id'],
                 )
             );
 
@@ -146,9 +147,12 @@ class DeviceUserController extends Controller
 
             $newHomeowner = User::where('username', $deviceUser->email)->update(
                 array(
+                    'first_name' => $request['first_name'],
+                    'last_name' => $request['last_name'],
                     'email' => $request['email'],
                     'username' => $request['email'],
                     'password' => bcrypt($request['mobile_no']),
+                    'contact_no' => $request['mobile_no'],
                 )
             );
 

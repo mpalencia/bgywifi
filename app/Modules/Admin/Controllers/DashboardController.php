@@ -12,6 +12,7 @@ use \BrngyWiFi\Modules\Caution\Models\Caution;
 use \BrngyWiFi\Modules\Emergency\Models\Emergency;
 use \BrngyWiFi\Modules\Event\Models\Event;
 use \BrngyWiFi\Modules\Messages\Models\Messages;
+use \BrngyWiFi\Modules\Notifications\Models\Notifications;
 use \BrngyWiFi\Modules\RefCategory\Models\RefCategory;
 use \BrngyWiFi\Modules\User\Models\User;
 
@@ -158,20 +159,36 @@ class DashboardController extends Controller
             ->limit(10)
             ->get();
 
-        $data['unexpected_visitors'] = DB::table('notifications')
-            ->join('visitors', 'visitors.id', '=', 'notifications.visitors_id')
-            ->join('users', 'users.id', '=', 'notifications.home_owner_id')
-            ->join('homeowner_address', 'notifications.home_owner_id', '=', 'homeowner_address.home_owner_id')
-            ->where(array( /*'notifications.status' => 1,*/'homeowner_address.primary' => 1))
-            ->take(10)
-            ->orderBy('notifications.created_at', 'DESC')
+        /*$data['unexpected_visitors'] = DB::table('notifications')
+        ->join('visitors', 'visitors.id', '=', 'notifications.visitors_id')
+        ->join('users', 'users.id', '=', 'notifications.approved_by')
+        ->join('homeowner_address', 'notifications.home_owner_id', '=', 'homeowner_address.home_owner_id')
+        ->where(array('homeowner_address.primary' => 1))
+        ->take(10)
+        ->orderBy('notifications.created_at', 'DESC')
+        ->get();*/
+        $data['unexpected_visitors'] = Notifications::with(['visitors' => function ($query) {
+
+        }])
+            ->with(['user' => function ($query) {
+                $query->select('id', 'first_name', 'last_name');
+            }])
+            ->with(['approved' => function ($query) {
+                $query->select('id', 'first_name', 'last_name');
+            }])
+            ->with(['homeOwnerAddress' => function ($query) {
+                $query->select('id', 'address');
+                //$query->where('primary', 1);
+            }])
+            ->limit(10)
+            ->orderBy('created_at')
             ->get();
 
         $data['unexpected_visitors_count'] = DB::table('notifications')
             ->join('visitors', 'visitors.id', '=', 'notifications.visitors_id')
             ->join('users', 'users.id', '=', 'notifications.home_owner_id')
-            ->join('homeowner_address', 'notifications.home_owner_id', '=', 'homeowner_address.home_owner_id')
-            ->where(array( /*'notifications.status' => 1,*/'homeowner_address.primary' => 1))
+            ->join('homeowner_address', 'notifications.homeowner_address_id', '=', 'homeowner_address.id')
+        //->where(array( /*'notifications.status' => 1,*/'homeowner_address.primary' => 1))
             ->count();
 
         $data['categories'] = RefCategory::get();
@@ -190,9 +207,9 @@ class DashboardController extends Controller
     {
         $events = Event::select('event.*', 'event.id AS eid', 'users.id AS uid', 'users.first_name', 'users.last_name', 'homeowner_address.*')
             ->join('users', 'event.home_owner_id', '=', 'users.id')
-            ->join('homeowner_address', 'event.home_owner_id', '=', 'homeowner_address.home_owner_id')
+            ->join('homeowner_address', 'event.homeowner_address_id', '=', 'homeowner_address.id')
             ->where('event.status', '=', 0)
-            ->where('homeowner_address.primary', '=', 1)
+        // ->where('homeowner_address.primary', '=', 1)
             ->where('event.start', '>=', date('Y-m-d'))
             ->orderBy('event.id', 'DESC')
             ->get()
@@ -213,9 +230,9 @@ class DashboardController extends Controller
     {
         $emergencies = Emergency::select('emergency_type.*', 'emergency.*', 'emergency.id AS eid', 'users.id AS uid', 'users.first_name', 'users.last_name', 'homeowner_address.*')
             ->join('users', 'emergency.home_owner_id', '=', 'users.id')
-            ->join('homeowner_address', 'emergency.home_owner_id', '=', 'homeowner_address.home_owner_id')
+            ->join('homeowner_address', 'emergency.homeowner_address_id', '=', 'homeowner_address.id')
             ->join('emergency_type', 'emergency.emergency_type_id', '=', 'emergency_type.id')
-            ->where('homeowner_address.primary', '=', 1)
+        //->where('homeowner_address.primary', '=', 1)
         //->whereBetween('emergency.created_at', array(new \DateTime(date('Y-m-d') . ' 00:00:00'), new \DateTime(date('Y-m-d', strtotime("+1 day")) . ' 24:00:00')))
             ->where('emergency.status', 0)
             ->orderBy('emergency.created_at', 'DESC')
@@ -235,9 +252,9 @@ class DashboardController extends Controller
         //CAUTION
         $caution = Caution::select('caution_type.*', 'caution.*', 'caution.id AS eid', 'users.id AS uid', 'users.first_name', 'users.last_name', 'homeowner_address.*')
             ->join('users', 'caution.home_owner_id', '=', 'users.id')
-            ->join('homeowner_address', 'caution.home_owner_id', '=', 'homeowner_address.home_owner_id')
+            ->join('homeowner_address', 'caution.homeowner_address_id', '=', 'homeowner_address.id')
             ->join('caution_type', 'caution.caution_type_id', '=', 'caution_type.id')
-            ->where('homeowner_address.primary', '=', 1)
+        //->where('homeowner_address.primary', '=', 1)
         //->whereBetween('caution.created_at', array(new \DateTime(date('Y-m-d') . ' 00:00:00'), new \DateTime(date('Y-m-d', strtotime("+1 day")) . ' 24:00:00')))
             ->where('caution.status', 0)
             ->orderBy('caution.created_at', 'DESC')
@@ -289,8 +306,8 @@ class DashboardController extends Controller
         //UNIDENTIFIED
         $unidentified = Alerts::select('alerts.*', 'alerts.id AS scid', 'users.id AS uid', 'users.first_name', 'users.last_name', 'homeowner_address.*')
             ->join('users', 'alerts.home_owner_id', '=', 'users.id')
-            ->join('homeowner_address', 'alerts.home_owner_id', '=', 'homeowner_address.home_owner_id')
-            ->where('homeowner_address.primary', '=', 1)
+            ->join('homeowner_address', 'alerts.homeowner_address_id', '=', 'homeowner_address.id')
+        //->where('homeowner_address.primary', '=', 1)
             ->where('alerts.status', '=', 0)
         //->whereBetween('alerts.created_at', array(new \DateTime(date('Y-m-d') . ' 00:00:00'), new \DateTime(date('Y-m-d', strtotime("+1 day")) . ' 24:00:00')))
             ->orderBy('alerts.created_at', 'DESC')

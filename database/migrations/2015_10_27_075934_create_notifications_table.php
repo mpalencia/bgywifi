@@ -34,6 +34,10 @@ class CreateNotificationsTable extends Migration
             $table->integer('status');
             $table->string('chikka_code')->nullable();
 
+            $table->integer('approved_by')->nullable()->unsigned();
+            $table->index('approved_by');
+            $table->foreign('approved_by')->references('id')->on('users')->onDelete('cascade');
+
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

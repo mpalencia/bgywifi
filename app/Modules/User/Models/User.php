@@ -20,7 +20,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         'password',
         'email',
         'pin_code',
-        'contact_no'
+        'contact_no',
+        'notification',
+        'alert',
+        'main_account_id',
     );
 
     public function role()
@@ -51,5 +54,20 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function homeOwnerAddressPrimary()
     {
         return $this->hasOne('BrngyWiFi\Modules\HomeownerAddress\Models\HomeownerAddress', 'home_owner_id');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany('BrngyWiFi\Modules\Notifications\Models\Notifications', 'home_owner_id', 'id');
+    }
+
+    public function notifications2()
+    {
+        return $this->hasMany('BrngyWiFi\Modules\Notifications\Models\Notifications', 'approved_by', 'id');
+    }
+
+    public function visitors()
+    {
+        return $this->hasMany('BrngyWiFi\Modules\Visitors\Models\Visitors', 'home_owner_id', 'id');
     }
 }

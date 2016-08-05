@@ -116,7 +116,7 @@
                     <div class="row">
                 		<div class="col-lg-12">
 		                 	<div class="panel panel-default">
-		                        <div class="panel-heading">
+		                        <!-- <div class="panel-heading">
 		                        	<div class="btn-group" data-toggle="buttons">
 									  <label class="btn btn-danger active" id="alertsRd">
 									    <input type="radio" name="options" id="optionAlerts" autocomplete="off" checked><i class="fa fa-bell"></i> Alerts
@@ -125,45 +125,34 @@
 									    <input type="radio" name="options" id="optionEvents" autocomplete="off"><i class="fa fa-calendar"></i> Events
 									  </label>
 									</div>
-									<!-- <i class="fa fa-bell"></i> Alerts -->
-		                        </div>
-		                        <div class="panel-body mapAlerts">
-		                        	<div class="map" id="mapAlerts" style="height:400px;"></div>
-		                            <div class="dataTable_wrapper">
-		                                <table class="table table-striped table-bordered table-hover" id="residentials">
-		                                    <thead>
-		                                    	<tr>
-		                                    		<th>Alerts</th>
-		                                            <th>Count</th>
-		                                            <th>Icon</th>
-		                                        </tr>
-		                                    </thead>
-		                                    <tbody>
-		                                        <tr class="odd gradeX">
-		                                        	<td>Emergency</td>
-		                                            <td><span id="emergencyCount">Loading...</span></td>
-		                                            <td><img src="{{asset('assets/images')}}/m6.png" width="20"/></td>
-		                                        </tr>
-		                                        <tr class="odd gradeX">
-		                                        	<td>Caution</td>
-		                                            <td><span id="cautionCount">Loading...</span></td>
-		                                            <td><img src="{{asset('assets/images')}}/m2.png" width="20"/></td>
-		                                        </tr>
-		                                        <tr class="odd gradeX">
-		                                        	<td>Issues</td>
-		                                            <td><span id="issuesCount">Loading...</span></td>
-		                                            <td><img src="{{asset('assets/images')}}/m1.png" width="20"/></td>
-		                                        </tr>
-		                                        <tr class="odd gradeX">
-		                                        	<td>Unidentified</td>
-		                                            <td><span id="unidentifiedAlertsCount">Loading...</span></td>
-		                                            <td><img src="{{asset('assets/images')}}/m7.png" width="20"/></td>
-		                                        </tr>
-		                         			</tbody>
-		                               	</table>
-		                          	</div>
-		                        </div>
-		                        <div class="panel-body mapEvents">
+		                        </div> -->
+
+                                <table class="table table-striped table-bordered table-hover" id="residentials">
+                                    <tbody>
+                                        <tr class="odd gradeX">
+                                        	<td><img src="{{asset('assets/images')}}/m1.png" width="20"/> Emergency</td>
+                                            <td><span id="emergencyCount">Loading...</span></td>
+                                            <td><img src="{{asset('assets/images')}}/m9.png" width="20"/> Unidentified</td>
+                                            <td><span id="unidentifiedAlertsCount">Loading...</span></td>
+                                        </tr>
+                                        <tr class="odd gradeX">
+                                        	<td><img src="{{asset('assets/images')}}/m2.png" width="20"/> Caution</td>
+                                            <td><span id="cautionCount">Loading...</span></td>
+                                            <td><img src="{{asset('assets/images')}}/m4.png" width="20"/> Events</td>
+                                            <td><span id="eventCount">Loading...</span></td>
+                                        </tr>
+                                        <tr class="odd gradeX">
+                                        	<td><img src="{{asset('assets/images')}}/m11.png" width="20"/> Issues</td>
+                                            <td><span id="issuesCount">Loading...</span></td>
+                                            <td><img src="{{asset('assets/images')}}/m5.png" width="20"/> Clustered</td>
+                                            <td></td>
+                                        </tr>
+                         			</tbody>
+                               	</table>
+
+
+		                        <div class="map" id="mapAlerts" style="height:400px;"></div>
+		                        <!-- <div class="panel-body mapEvents">
 		                          	<div class="map" id="map" style="height:400px;"></div>
 		                            <div class="dataTable_wrapper">
 		                                <table class="table table-striped table-bordered table-hover" id="residentials">
@@ -179,132 +168,9 @@
 		                         			</tbody>
 		                               	</table>
 		                          	</div>
-		                      	</div>
+		                      	</div> -->
 		                 	</div>
                 		</div>
-
-                		<div class="col-lg-12">
-
-		                    <div class="panel panel-success">
-		                        <div class="panel-heading">
-		                            Latest Events
-		                        </div>
-		                        <!-- /.panel-heading -->
-		                        <div class="panel-body">
-		                            <div class="dataTable_wrapper">
-		                                <table class="table table-striped table-bordered table-hover" id="residentials">
-		                                    <thead>
-		                                    	<tr>
-		                                            <th>Home Owner Name</th>
-		                                            <th>Home Owner Address</th>
-		                                            <th>Event Name</th>
-		                                            <th>Start Date</th>
-		                                            <th>End Date</th>
-
-		                                        </tr>
-		                                    </thead>
-		                                    <tbody>
-
-		                                    @foreach($events as $k => $v)
-		                                        <tr class="odd gradeX">
-		                                            <td>{{$v->first_name}} {{$v->last_name}}</td>
-		                                            <td>{{$v->address}}</td>
-		                                            <td>{{$v->name}}</td>
-		                                            <td class="center">{{ date('M j, Y', strtotime($v->start))}}</td>
-		                                            <td class="center">{{ date('M j, Y', strtotime($v->end))}}</td>
-		                                        </tr>
-		                                    @endforeach
-		                         			</tbody>
-		                               	</table>
-		                          	</div>
-		                      	</div>
-		                 	</div>
-		            	</div>
-
-                		<div class="col-lg-12">
-		                 	<div class="panel panel-success">
-		                        <div class="panel-heading">
-		                            Latest Event Visitors
-		                        </div>
-		                        <!-- /.panel-heading -->
-		                        <div class="panel-body">
-		                            <div class="dataTable_wrapper">
-		                                <table class="table table-striped table-bordered table-hover" id="security">
-		                                    <thead>
-		                                    	<tr>
-		                                    		<th>Start Date</th>
-		                                    		<th>Visitor Name</th>
-		                                            <th>Home Owner Name</th>
-		                                            <th>Home Owner Address</th>
-		                                            <th>Arrived</th>
-		                                        </tr>
-		                                    </thead>
-		                                    <tbody>
-		                                    @if(count($event_visitors) != 0)
-			                                    @foreach($event_visitors as $k => $v)
-			                                        <tr class="odd gradeX">
-			                                        	<td>{{ date('M j, Y', strtotime($v->start))}}</td>
-			                                        	<td>{{$v->guest_name}}</td>
-			                                            <td>{{$v->first_name}} {{$v->last_name}}</td>
-			                                            <td>{{$v->address}}</td>
-			                                            <td>
-			                                            	@if($v->status == 1)
-			                                            		<span class="label label-success">Yes</span>
-			                                            	@else
-			                                            		<span class="label label-danger">No</span>
-			                                            	@endif
-			                                            </td>
-			                                        </tr>
-			                                    @endforeach
-		                                    @else
-		                                    	<tr class="odd gradeX">
-		                                            <td colspan="3">No record found</td>
-		                                        </tr>
-		                                    @endif
-		                         			</tbody>
-		                               	</table>
-		                          	</div>
-		                      	</div>
-		                 	</div>
-                		</div>
-
-                		<div class="col-lg-12">
-		                 	<div class="panel panel-primary">
-		                        <div class="panel-heading">
-		                            Latest Unexpected Visitors
-		                        </div>
-		                        <!-- /.panel-heading -->
-		                        <div class="panel-body">
-		                            <div class="dataTable_wrapper">
-		                                <table class="table table-striped table-bordered table-hover" id="security">
-		                                    <thead>
-		                                    	<tr>
-		                                    		<th>Visitor Name</th>
-		                                            <th>Home Owner Name</th>
-		                                            <th>Home Owner Address</th>
-		                                        </tr>
-		                                    </thead>
-		                                    <tbody>
-		                                    @if(count($unexpected_visitors) != 0)
-			                                    @foreach($unexpected_visitors as $k => $v)
-			                                        <tr class="odd gradeX">
-			                                            <td>{{$v->name}}</td>
-			                                            <td>{{$v->first_name}} {{$v->last_name}}</td>
-			                                            <td>{{$v->address}}</td>
-			                                        </tr>
-			                                    @endforeach
-		                                    @else
-		                                    	<tr class="odd gradeX">
-		                                            <td colspan="3">No record found</td>
-		                                        </tr>
-		                                    @endif
-		                         			</tbody>
-		                               	</table>
-		                          	</div>
-		                      	</div>
-		                 	</div>
-                		</div>
-
                 		<div class="col-lg-12">
 		                 	<div class="panel panel-danger">
 		                        <div class="panel-heading">
@@ -442,6 +308,143 @@
 			                                            	@endif
 			                                            </td>
 			                                            <td>{{date_format(date_create($v->created_at),"M d, Y h:i A")}}</td>
+			                                        </tr>
+			                                    @endforeach
+		                                    @else
+		                                    	<tr class="odd gradeX">
+		                                            <td colspan="3">No record found</td>
+		                                        </tr>
+		                                    @endif
+		                         			</tbody>
+		                               	</table>
+		                          	</div>
+		                      	</div>
+		                 	</div>
+                		</div>
+                		<div class="col-lg-12">
+		                    <div class="panel panel-success">
+		                        <div class="panel-heading">
+		                            Latest Events
+		                        </div>
+		                        <!-- /.panel-heading -->
+		                        <div class="panel-body">
+		                            <div class="dataTable_wrapper">
+		                                <table class="table table-striped table-bordered table-hover" id="residentials">
+		                                    <thead>
+		                                    	<tr>
+		                                            <th>Home Owner Name</th>
+		                                            <th>Home Owner Address</th>
+		                                            <th>Event Name</th>
+		                                            <th>Start Date</th>
+		                                            <th>End Date</th>
+
+		                                        </tr>
+		                                    </thead>
+		                                    <tbody>
+
+		                                    @foreach($events as $k => $v)
+		                                        <tr class="odd gradeX">
+		                                            <td>{{$v->first_name}} {{$v->last_name}}</td>
+		                                            <td>{{$v->address}}</td>
+		                                            <td>{{$v->name}}</td>
+		                                            <td class="center">{{ date('M j, Y', strtotime($v->start))}}</td>
+		                                            <td class="center">{{ date('M j, Y', strtotime($v->end))}}</td>
+		                                        </tr>
+		                                    @endforeach
+		                         			</tbody>
+		                               	</table>
+		                          	</div>
+		                      	</div>
+		                 	</div>
+		            	</div>
+
+                		<div class="col-lg-12">
+		                 	<div class="panel panel-success">
+		                        <div class="panel-heading">
+		                            Latest Event Visitors
+		                        </div>
+		                        <!-- /.panel-heading -->
+		                        <div class="panel-body">
+		                            <div class="dataTable_wrapper">
+		                                <table class="table table-striped table-bordered table-hover" id="security">
+		                                    <thead>
+		                                    	<tr>
+		                                    		<th>Start Date</th>
+		                                    		<th>Visitor Name</th>
+		                                            <th>Home Owner Name</th>
+		                                            <th>Home Owner Address</th>
+		                                            <th>Arrived</th>
+		                                        </tr>
+		                                    </thead>
+		                                    <tbody>
+		                                    @if(count($event_visitors) != 0)
+			                                    @foreach($event_visitors as $k => $v)
+			                                        <tr class="odd gradeX">
+			                                        	<td>{{ date('M j, Y', strtotime($v->start))}}</td>
+			                                        	<td>{{$v->guest_name}}</td>
+			                                            <td>{{$v->first_name}} {{$v->last_name}}</td>
+			                                            <td>{{$v->address}}</td>
+			                                            <td>
+			                                            	@if($v->status == 1)
+			                                            		<span class="label label-success">Yes</span>
+			                                            	@else
+			                                            		<span class="label label-danger">No</span>
+			                                            	@endif
+			                                            </td>
+			                                        </tr>
+			                                    @endforeach
+		                                    @else
+		                                    	<tr class="odd gradeX">
+		                                            <td colspan="3">No record found</td>
+		                                        </tr>
+		                                    @endif
+		                         			</tbody>
+		                               	</table>
+		                          	</div>
+		                      	</div>
+		                 	</div>
+                		</div>
+
+                		<div class="col-lg-12">
+		                 	<div class="panel panel-primary">
+		                        <div class="panel-heading">
+		                            Latest Unexpected Visitors
+		                        </div>
+		                        <!-- /.panel-heading -->
+		                        <div class="panel-body">
+		                            <div class="dataTable_wrapper">
+		                                <table class="table table-striped table-bordered table-hover" id="security">
+		                                    <thead>
+		                                    	<tr>
+		                                    		<th>Visitor Name</th>
+		                                            <th>Authorized By</th>
+		                                            <th>Person To Visit</th>
+		                                            <th>Home Owner Address</th>
+		                                            <th>Status</th>
+		                                        </tr>
+		                                    </thead>
+		                                    <tbody>
+		                                    @if(count($unexpected_visitors) != 0)
+			                                    @foreach($unexpected_visitors as $k => $v)
+			                                        <tr class="odd gradeX">
+			                                            <td>{{$v->visitors->name}}</td>
+			                                            @if(!is_null($v->approved))
+			                                            <td>{{$v->approved->first_name}} {{$v->approved->last_name}}</td>
+			                                            @else
+			                                            <td></td>
+			                                            @endif
+
+			                                            <td>{{$v->user->first_name}} {{$v->user->last_name}}</td></td>
+			                                            <td>{{$v->homeOwnerAddress->address}}</td>
+			                                            <td>
+			                                            	@if($v->status == 1)
+		                                            		<span class="label label-success">Accepted</span>
+		                                            		@elseif($v->status == 2)
+		                                            		<span class="label label-danger">Rejected</span>
+			                                            	@else
+		                                            		<span class="label label-warning">Waiting</span>
+			                                            	@endif
+			                                            </td>
 			                                        </tr>
 			                                    @endforeach
 		                                    @else

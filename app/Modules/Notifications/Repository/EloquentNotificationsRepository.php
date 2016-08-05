@@ -9,6 +9,7 @@ use BrngyWiFi\Modules\EventGuestList\Models\EventGuestList;
 use BrngyWiFi\Modules\Notifications\Models\Notifications;
 use BrngyWiFi\Modules\RefCategory\Models\RefCategory;
 use BrngyWiFi\Modules\SuggestionComplaints\Repository\SuggestionComplaintsRepositoryInterface;
+use BrngyWiFi\Modules\User\Models\User;
 
 class EloquentNotificationsRepository implements NotificationsRepositoryInterface
 {
@@ -62,7 +63,7 @@ class EloquentNotificationsRepository implements NotificationsRepositoryInterfac
      */
     public function updateNotifcations($payload)
     {
-        return $this->notifications->find($payload->id)->fill(['status' => $payload->status])->save();
+        return $this->notifications->find($payload->id)->fill(['status' => $payload->status, 'approved_by' => $payload->user_id])->save();
     }
 
     /**
@@ -84,20 +85,67 @@ class EloquentNotificationsRepository implements NotificationsRepositoryInterfac
      */
     public function getAllVisitors($homeOwnerId)
     {
-        return $this->notifications
+        /*$user = User::find($homeOwnerId);
+
+        return $users = User::with(['notifications' => function ($query) {
+        $query->where('status', 0);
+        }])
+        ->where('main_account_id', $user->main_account_id)
+        ->get()
+        ->toArray();*/
+
+        /*  $user = User::find($homeOwnerId);
+
+        $homeowners = User::with(['notifications' => function ($query) {
+        $query->where('status', 0);
+        $query->select('id', 'user_id', 'visitors_id', 'home_owner_id', 'homeowner_address_id', 'status', 'created_at');
+
+        $query->with(['visitors' => function ($query) {
+        $query->select('id', 'name', 'ref_category_id', 'plate_number', 'car_description', 'notes', 'photo');
+        $query->with(['refCategory' => function ($query) {
+        $query->select('id', 'category_name');
+        }]);
+        }]);
+        }])
+        ->select('id', 'first_name', 'last_name', 'main_account_id')
+        ->where('main_account_id', $user->main_account_id)
+        ->get()
+        ->toArray();
+        $result = array();
+
+        foreach ($homeowners as $key => $value) {
+        if (!empty($value['notifications'])) {
+        $result[] = $value;
+        }
+        }
+
+        return $result;*/
+        $main_homeowner = User::find($homeOwnerId);
+        $notifications = $this->notifications
             ->with('visitors')
-            ->with(['user' => function ($query) use ($homeOwnerId) {
-                $query->select('id', 'first_name', 'last_name');
+            ->with(['user' => function ($query) use ($homeOwnerId, $main_homeowner) {
+                $query->select('id', 'first_name', 'last_name', 'main_account_id');
+                $query->where('main_account_id', $main_homeowner->main_account_id);
             }])
             ->with(['homeOwnerAddress' => function ($query) use ($homeOwnerId) {
                 $query->select('id', 'address');
             }])
             ->where('status', 0)
-            ->where('home_owner_id', $homeOwnerId)
+
             ->whereBetween('updated_at', array(new \DateTime(date('Y-m-d') . ' 00:00:00'), new \DateTime(date('Y-m-d') . ' 24:00:00')))
             ->orderBy('created_at', 'desc')
             ->get()
             ->toArray();
+
+        $kevin = array();
+
+        foreach ($notifications as $key => $value) {
+            if ($value['user'] != null) {
+                $kevin[] = $value;
+            }
+        }
+
+        return $kevin;
     }
 
     /**
@@ -109,14 +157,24 @@ class EloquentNotificationsRepository implements NotificationsRepositoryInterfac
     {
         return $this->notifications
             ->with(['visitors' => function ($query) {
+                //$query->select('id', 'name', 'ref_category_id');
                 $query->select('id', 'name', 'ref_category_id');
+                $query->with(['refCategory' => function ($query) {
+                    $query->select('id', 'category_name');
+                }]);
             }])
             ->with(['homeownerAddress' => function ($query) {
                 $query->select('id', 'address');
             }])
+            ->with(['approved' => function ($query) {
+                $query->select('id', 'first_name', 'last_name');
+            }])
+            ->with(['user' => function ($query) {
+                $query->select('id', 'first_name as homeowner_first_name', 'last_name as homeowner_last_name');
+            }])
             ->where('status', 1)
             ->where('user_id', $securityGuardId)
-            ->select('id', 'user_id', 'visitors_id', 'home_owner_id', 'homeowner_address_id', 'status', 'created_at')
+            ->select('id', 'user_id', 'visitors_id', 'home_owner_id', 'homeowner_address_id', 'status', 'created_at', 'approved_by')
             ->get()
             ->toArray();
     }
@@ -130,14 +188,52 @@ class EloquentNotificationsRepository implements NotificationsRepositoryInterfac
     {
         return $this->notifications
             ->with(['visitors' => function ($query) {
+                //$query->select('id', 'name', 'ref_category_id');
                 $query->select('id', 'name', 'ref_category_id');
+                $query->with(['refCategory' => function ($query) {
+                    $query->select('id', 'category_name');
+                }]);
             }])
             ->with(['homeownerAddress' => function ($query) {
                 $query->select('id', 'address');
             }])
+            ->with(['approved' => function ($query) {
+                $query->select('id', 'first_name', 'last_name');
+            }])
+            ->with(['user' => function ($query) {
+                $query->select('id', 'first_name as homeowner_first_name', 'last_name as homeowner_last_name');
+            }])
             ->where('status', 2)
             ->where('user_id', $securityGuardId)
-            ->select('id', 'user_id', 'visitors_id', 'home_owner_id', 'homeowner_address_id', 'status', 'created_at')
+            ->select('id', 'user_id', 'visitors_id', 'home_owner_id', 'homeowner_address_id', 'status', 'created_at', 'approved_by')
+            ->get()
+            ->toArray();
+    }
+
+    /**
+     * Get all waiting unexpected visitors for security guard
+     *
+     * @return static
+     */
+    public function getWaitingUnexpectedVisitors($securityGuardId)
+    {
+        return $this->notifications
+            ->with(['visitors' => function ($query) {
+                //$query->select('id', 'name', 'ref_category_id');
+                $query->select('id', 'name', 'ref_category_id');
+                $query->with(['refCategory' => function ($query) {
+                    $query->select('id', 'category_name');
+                }]);
+            }])
+            ->with(['homeownerAddress' => function ($query) {
+                $query->select('id', 'address');
+            }])
+            ->with(['user' => function ($query) {
+                $query->select('id', 'first_name as homeowner_first_name', 'last_name as homeowner_last_name');
+            }])
+            ->where('status', 0)
+            ->where('user_id', $securityGuardId)
+            ->select('id', 'user_id', 'visitors_id', 'home_owner_id', 'homeowner_address_id', 'status', 'created_at', 'approved_by')
             ->get()
             ->toArray();
     }
@@ -149,19 +245,57 @@ class EloquentNotificationsRepository implements NotificationsRepositoryInterfac
      */
     public function getApprovedUnexpectedVisitorsByHomeowner($homeOwnerId)
     {
-        return $this->notifications
-            ->with(['visitors' => function ($query) {
+        /*return $this->notifications
+        ->with(['visitors' => function ($query) {
+        $query->select('id', 'name', 'ref_category_id');
+        }])
+        ->with(['homeownerAddress' => function ($query) {
+        $query->select('id', 'address');
+        }])
+        ->with(['user' => function ($query) {
+        $query->select('id', 'first_name', 'last_name');
+        }])
+        ->where('status', 1)
+        ->where('home_owner_id', $homeOwnerId)
+        ->select('id', 'user_id', 'visitors_id', 'home_owner_id', 'homeowner_address_id', 'status', 'created_at')
+        ->orderBy('created_at', 'desc')
+        ->get()
+        ->toArray();*/
+        $user = User::find($homeOwnerId);
+
+        $homeowners = $users = User::with(['notifications' => function ($query) {
+            $query->where('status', 1);
+            $query->select('id', 'user_id', 'visitors_id', 'home_owner_id', 'homeowner_address_id', 'status', 'approved_by', 'created_at');
+
+            $query->with(['approved' => function ($query) {
+                $query->select('id', 'first_name AS approved_by_first_name', 'last_name AS approved_by_last_name');
+            }]);
+
+            $query->with(['visitors' => function ($query) {
+                //$query->select('id', 'name', 'ref_category_id');
                 $query->select('id', 'name', 'ref_category_id');
-            }])
-            ->with(['homeownerAddress' => function ($query) {
+                $query->with(['refCategory' => function ($query) {
+                    $query->select('id', 'category_name');
+                }]);
+            }]);
+            $query->with(['homeOwnerAddress' => function ($query) {
                 $query->select('id', 'address');
-            }])
-            ->where('status', 1)
-            ->where('home_owner_id', $homeOwnerId)
-            ->select('id', 'user_id', 'visitors_id', 'home_owner_id', 'homeowner_address_id', 'status', 'created_at')
-            ->orderBy('created_at', 'desc')
+            }]);
+        }])
+            ->select('id', 'first_name', 'last_name', 'main_account_id')
+            ->where('main_account_id', $user->main_account_id)
             ->get()
             ->toArray();
+
+        $result = array();
+
+        foreach ($homeowners as $key => $value) {
+            if (!empty($value['notifications'])) {
+                $result[] = $value;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -171,19 +305,54 @@ class EloquentNotificationsRepository implements NotificationsRepositoryInterfac
      */
     public function getDeniedUnexpectedVisitorsByHomeowner($homeOwnerId)
     {
-        return $this->notifications
-            ->with(['visitors' => function ($query) {
+        /*return $this->notifications
+        ->with(['visitors' => function ($query) {
+        $query->select('id', 'name', 'ref_category_id');
+        }])
+        ->with(['homeownerAddress' => function ($query) {
+        $query->select('id', 'address');
+        }])
+        ->where('status', 2)
+        ->where('home_owner_id', $homeOwnerId)
+        ->select('id', 'user_id', 'visitors_id', 'home_owner_id', 'homeowner_address_id', 'status', 'created_at')
+        ->orderBy('created_at', 'desc')
+        ->get()
+        ->toArray();*/
+        $user = User::find($homeOwnerId);
+
+        $homeowners = User::with(['notifications' => function ($query) {
+            $query->where('status', 2);
+            $query->select('id', 'user_id', 'visitors_id', 'home_owner_id', 'homeowner_address_id', 'status', 'approved_by', 'created_at');
+
+            $query->with(['approved' => function ($query) {
+                $query->select('id', 'first_name AS approved_by_first_name', 'last_name AS approved_by_last_name');
+            }]);
+
+            $query->with(['visitors' => function ($query) {
                 $query->select('id', 'name', 'ref_category_id');
-            }])
-            ->with(['homeownerAddress' => function ($query) {
+                $query->with(['refCategory' => function ($query) {
+                    $query->select('id', 'category_name');
+                }]);
+            }]);
+            $query->with(['homeOwnerAddress' => function ($query) {
                 $query->select('id', 'address');
-            }])
-            ->where('status', 2)
-            ->where('home_owner_id', $homeOwnerId)
-            ->select('id', 'user_id', 'visitors_id', 'home_owner_id', 'homeowner_address_id', 'status', 'created_at')
-            ->orderBy('created_at', 'desc')
+            }]);
+        }])
+            ->select('id', 'first_name', 'last_name', 'main_account_id')
+            ->where('main_account_id', $user->main_account_id)
             ->get()
             ->toArray();
+
+        $result = array();
+
+        foreach ($homeowners as $key => $value) {
+            if (!empty($value['notifications'])) {
+                $result[] = $value;
+            }
+        }
+
+        return $result;
+
     }
 
     /**
@@ -275,6 +444,20 @@ class EloquentNotificationsRepository implements NotificationsRepositoryInterfac
     public function getByChikkaCode($chikka_code)
     {
         if ($notification = $this->notifications->where(['chikka_code' => $chikka_code, 'status' => 0])->first()) {
+            return $notification;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get first unexpected visitor.
+     *
+     * @return static
+     */
+    public function getFirstVisitor($home_owner_id)
+    {
+        if ($notification = $this->notifications->where(['home_owner_id' => $home_owner_id, 'status' => 0])->orderBy('created_at')->first()) {
             return $notification;
         }
 

@@ -92,7 +92,7 @@ class ResidentialController extends Controller
 
         if (is_null($checkUser)) {
             $user = User::create($data);
-
+            User::where('id', $user->id)->update(['main_account_id' => $user->id]);
             //dd($user);
             if ($user) {
                 //add homeowner's address

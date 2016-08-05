@@ -72,7 +72,7 @@ class NotificationsController extends Controller
         $send_message .= "Car Description: " . $request->car_description . "\n";
         $send_message .= "Notes: " . $request->notes . "\n\n";
         $send_message .= "GUEST ID: " . $chikka_code . "\n";
-        $send_message .= "Do you want to meet this person? Please reply YES/NO <SPACE> <GUEST ID>.";
+        $send_message .= "Do you want to meet this person? Please reply YES/NO";
 
         (new ChikkaReply)->call($request, true, $send_message, $contact_no);
         return ['result' => 'success', 'visitor' => $visitors];
@@ -133,6 +133,24 @@ class NotificationsController extends Controller
     }
 
     /**
+     * Approve/Deny Unexpected visitors by security guard.
+     *
+     * @param Request $request
+     * @param BrngyWiFi\Services\Image\UploadImage $image
+     * @return Illuminate\Http\JsonResponse
+     */
+    public function approveOrDenyBySecurity(ResponseFactory $response, Request $request)
+    {
+        $request = json_decode($request->getContent());
+
+        $decision = ($request->status == 1) ? 'Accepted' : 'Denied';
+
+        $notificationsResult = $this->notifications->updateNotifcations($request);
+
+        return $response->make(['isSucess' => $notificationsResult]);
+    }
+
+    /**
      * Get all approved unexpected visitors for security guard
      * @return Notifications
      */
@@ -148,6 +166,15 @@ class NotificationsController extends Controller
     public function getDeniedUnexpectedVisitors($security_guard_id)
     {
         return $this->notifications->getDeniedUnexpectedVisitors($security_guard_id);
+    }
+
+    /**
+     * Get all waitin unexpected visitors for security guard
+     * @return Notifications
+     */
+    public function getWaitingUnexpectedVisitors($security_guard_id)
+    {
+        return $this->notifications->getWaitingUnexpectedVisitors($security_guard_id);
     }
 
     /**

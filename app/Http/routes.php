@@ -47,7 +47,7 @@ Route::group(['middleware' => 'cors'], function () {
          * Event
          */
         Route::group(['module' => 'Event', 'namespace' => 'BrngyWiFi\Modules\Event\Controllers'], function () {
-            Route::resource('events', 'EventController');
+            Route::resource('events', 'EventController', ['except' => ['show']]);
             Route::get('getEvent/{event_id}', 'EventController@getEvent');
             Route::get('getEventsByUserId/{home_owner_id}', 'EventController@getEventsByUserId');
             Route::get('getEventsByHomeOwnerId/{home_owner_id}', 'EventController@getEventsByHomeOwnerId');
@@ -77,10 +77,12 @@ Route::group(['middleware' => 'cors'], function () {
         Route::group(['module' => 'Notifications', 'namespace' => 'BrngyWiFi\Modules\Notifications\Controllers'], function () {
             Route::post('notifications/sendMessageToHomeOwner', 'NotificationsController@sendMessageToHomeOwner');
             Route::post('notifications/sendMessageToSecurity', 'NotificationsController@sendMessageToSecurity');
+            Route::post('notifications/approveOrDenyBySecurity', 'NotificationsController@approveOrDenyBySecurity');
 
             Route::get('visitors/{home_owner_id}', 'NotificationsController@getVisitors');
             Route::get('notifications/getApprovedUnexpectedVisitors/{security_guard_id}', 'NotificationsController@getApprovedUnexpectedVisitors');
             Route::get('notifications/getDeniedUnexpectedVisitors/{security_guard_id}', 'NotificationsController@getDeniedUnexpectedVisitors');
+            Route::get('notifications/getWaitingUnexpectedVisitors/{security_guard_id}', 'NotificationsController@getWaitingUnexpectedVisitors');
 
             Route::get('notifications/getApprovedUnexpectedVisitorsByHomeowner/{home_owner_id}', 'NotificationsController@getApprovedUnexpectedVisitorsByHomeowner');
             Route::get('notifications/getDeniedUnexpectedVisitorsByHomeowner/{home_owner_id}', 'NotificationsController@getDeniedUnexpectedVisitorsByHomeowner');
@@ -198,7 +200,16 @@ Route::group(['middleware' => 'cors'], function () {
         });*/
 
         Route::get('getNotificationsCount/{home_owner_id}', function ($home_owner_id) {
-            $unexpectedVisitors = \BrngyWiFi\Modules\Notifications\Models\Notifications::where('home_owner_id', $home_owner_id)->where('status', 0)->whereBetween('updated_at', array(new \DateTime(date('Y-m-d') . ' 00:00:00'), new \DateTime(date('Y-m-d') . ' 24:00:00')))->get()->count();
+            $findMainAccountId = \BrngyWiFi\Modules\User\Models\User::find($home_owner_id);
+            $getHomeownerWithSameMainAccountId = \BrngyWiFi\Modules\User\Models\User::where('main_account_id', $findMainAccountId->main_account_id)->get()->toArray();
+
+            $homeownerWithSameMainAccountId = array();
+
+            foreach ($getHomeownerWithSameMainAccountId as $key => $value) {
+                $homeownerWithSameMainAccountId[] = $value['id'];
+            }
+
+            $unexpectedVisitors = \BrngyWiFi\Modules\Notifications\Models\Notifications::whereIn('home_owner_id', $homeownerWithSameMainAccountId)->where('status', 0)->whereBetween('updated_at', array(new \DateTime(date('Y-m-d') . ' 00:00:00'), new \DateTime(date('Y-m-d') . ' 24:00:00')))->get()->count();
             $emergency = \BrngyWiFi\Modules\Emergency\Models\Emergency::where('status', 0)->whereNull('end_date')->get()->count();
             $caution = \BrngyWiFi\Modules\Caution\Models\Caution::where('status', 0)->whereNull('end_date')->get()->count();
             $unidentified = \BrngyWiFi\Modules\Alerts\Models\Alerts::where('status', 0)->get()->count();

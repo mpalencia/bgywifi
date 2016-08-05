@@ -46,6 +46,13 @@ interface NotificationsRepositoryInterface
     public function getDeniedUnexpectedVisitors($securityGuardId);
 
     /**
+     * Get all waiting unexpected visitors for security guard
+     *
+     * @return static
+     */
+    public function getWaitingUnexpectedVisitors($securityGuardId);
+
+    /**
      * Get all unexpected guests
      *
      * @return static
@@ -58,4 +65,11 @@ interface NotificationsRepositoryInterface
      * @return static
      */
     public function getByChikkaCode($chikka_code);
+
+    /**
+     * Get first unexpected visitor.
+     *
+     * @return static
+     */
+    public function getFirstVisitor($home_owner_id);
 }
